@@ -96,4 +96,28 @@ class proklung_error_notifier extends CModule
             // Ошибки типа таблица не найдена - глушатся.
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function InstallEvents()
+    {
+        \CAgent::AddAgent(
+            '\\Proklung\\Error\\Notifier\\ClearTableAgent::clear();',
+            'proklung.error.notifier',
+            'N',
+            10 * 24 * 3600,
+            '',
+            'Y',
+            ''
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function UnInstallEvents()
+    {
+        \CAgent::RemoveModuleAgents('proklung.error.notifier');
+    }
 }
