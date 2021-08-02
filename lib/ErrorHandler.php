@@ -63,6 +63,18 @@ class ErrorHandler extends ExceptionHandlerLog
         $this->initTypes($options);
 
         $this->options = $options;
+
+        $this->initTypes($options);
+
+        $this->options = $options;
+        $this->options['env'] = $this->options['env'] ?? 'prod';
+
+        $this->options['allowed_env'] = $this->options['allowed_env'] ?? ['prod'];
+        if (count($this->options['allowed_env']) === 0) {
+            $this->options['allowed_env'] = ['prod'];
+        }
+
+        $this->options['importancy'] = $this->options['importancy'] ?? Notification::IMPORTANCE_URGENT;
     }
 
     /**

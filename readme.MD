@@ -79,10 +79,12 @@ return [
                             // Получатель почты; перебивает параметры родительского модуля
                             'recipient' => 'email@gmail.com',
                             // Или какой-нибудь иной способ различения dev/prod среды
+                            // По умолчанию - dev
                             'env' => env('DEBUG', false) ? 'dev' : 'prod',
-                            // В каком окружении работать.
+                            // В каком окружении работать. По умолчанию - prod.
                             'allowed_env' => ['dev', 'prod'],
                             // Уровень важности согласно channel_policy (см. документацию к модулю proklung.notifier)
+                            // По умолчанию - urgent
                             'importancy' => Notification::IMPORTANCE_URGENT,
                         ),
                     ),
