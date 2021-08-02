@@ -13,12 +13,17 @@ use Bitrix\Main\Application;
 class ClearTableAgent
 {
     /**
+     * Очистка таблицы b_fatal_error_log раз в сутки.
+     *
      * @return string
      */
     public static function clear() : string
     {
         $connection = Application::getConnection();
-        $connection->truncateTable('b_fatal_error_log');
+
+        if ($connection->isTableExists('b_fatal_error_log')) {
+            $connection->truncateTable('b_fatal_error_log');
+        }
 
         return '\Proklung\Error\Notifier\ClearTableAgent::clear();';
     }
