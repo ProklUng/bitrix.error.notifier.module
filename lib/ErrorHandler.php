@@ -63,18 +63,7 @@ class ErrorHandler extends ExceptionHandlerLog
         $this->initTypes($options);
 
         $this->options = $options;
-
-        $this->initTypes($options);
-
-        $this->options = $options;
-        $this->options['env'] = $this->options['env'] ?? 'prod';
-
-        $this->options['allowed_env'] = $this->options['allowed_env'] ?? ['prod'];
-        if (count($this->options['allowed_env']) === 0) {
-            $this->options['allowed_env'] = ['prod'];
-        }
-
-        $this->options['importancy'] = $this->options['importancy'] ?? Notification::IMPORTANCE_URGENT;
+        $this->initOptions();
     }
 
     /**
@@ -109,6 +98,25 @@ class ErrorHandler extends ExceptionHandlerLog
     }
 
     /**
+     * Экземпляр notifier.
+     *
+     * @return NotifierInterface
+     */
+    private function getNotifier() : NotifierInterface
+    {
+        if (!class_exists(\Proklung\Notifier\DI\Services::class)
+            ||
+            !\Proklung\Notifier\DI\Services::has('notifier')
+        ) {
+            throw new RuntimeException('Не установлен родительский модуль.');
+        }
+
+        return \Proklung\Notifier\DI\Services::get('notifier');
+    }
+
+    /**
+     * Отправка уведомлений.
+     *
      * @param Exception $exception
      *
      * @return void
@@ -116,9 +124,8 @@ class ErrorHandler extends ExceptionHandlerLog
      */
     private function send(Exception $exception) : void
     {
-        /** @var NotifierInterface $notifier */
-        $notifier = \Proklung\Notifier\DI\Services::get('notifier');
-        $importancy = $this->options['importancy'] ?? Notification::IMPORTANCE_URGENT;
+        $notifier = $this->getNotifier();
+        $importancy = $this->options['importancy'];
 
         $envelope = \Proklung\Notifier\DI\Services::getParameter('envelope');
         $emails = $envelope['recipients'] ?? [];
@@ -176,6 +183,8 @@ class ErrorHandler extends ExceptionHandlerLog
     }
 
     /**
+     * Инициализация типов обрабатываемых ошибок.
+     *
      * @param array $options Опции.
      *
      * @return void
@@ -192,5 +201,22 @@ class ErrorHandler extends ExceptionHandlerLog
                 $this->logTypeFlags[$logType] = true;
             }
         }
+    }
+
+    /**
+     * Обработка параметров.
+     *
+     * @return void
+     */
+    private function initOptions(): void
+    {
+        $this->options['env'] = $this->options['env'] ?? 'prod';
+
+        $this->options['allowed_env'] = $this->options['allowed_env'] ?? ['prod'];
+        if (count($this->options['allowed_env']) === 0) {
+            $this->options['allowed_env'] = ['prod'];
+        }
+
+        $this->options['importancy'] = $this->options['importancy'] ?? Notification::IMPORTANCE_URGENT;
     }
 }
