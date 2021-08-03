@@ -72,14 +72,6 @@ class proklung_error_notifier extends CModule
                 Base::getInstance(ErrorLogTable::class)->createDBTable();
             }
         }
-
-        if (!Application::getConnection()->isTableExists(
-            Base::getInstance(ErrorLogTable::class)->getDBTableName()
-        )) {
-            throw new RuntimeException(
-                'Table for module ' . $this->MODULE_ID . ' not created'
-            );
-        }
     }
 
     /**
